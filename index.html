@@ -12,9 +12,9 @@
         }
         .animate-pulse-fast { animation: pulse-fast 1s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
         .hidden { display: none !important; }
-        /* Smooth custom scrollbars for tables */
-        .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
-        .custom-scroll::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); border-radius: 4px; }
+        /* Smooth custom scrollbars for tables & brackets */
+        .custom-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+        .custom-scroll::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.8); border-radius: 4px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
         .custom-scroll::-webkit-scrollbar-thumb:hover { background: #eab308; }
     </style>
@@ -34,6 +34,9 @@
                 <p id="header-subtitle" class="text-xs text-slate-400 font-semibold tracking-wider">2V2 ARENA</p>
             </div>
         </div>
+        <button id="btn-exit" class="px-4 py-2 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white text-xs font-bold uppercase rounded-md shadow-md hover:scale-105 transition active:scale-95 hidden">
+            Quit Match
+        </button>
     </header>
 
     <!-- SCREENS CONTAINER -->
@@ -93,32 +96,42 @@
         <!-- SETUP SCREEN -->
         <main id="screen-setup" class="hidden flex-1 flex-col items-center justify-center px-4 max-w-5xl mx-auto w-full my-6">
             <div class="text-center mb-6">
-                <h2 class="text-3xl font-extrabold text-white uppercase tracking-wider">PRE-MATCH SETUP</h2>
-                <p class="text-xs text-slate-400 uppercase tracking-widest mt-1">Configure your ultimate lineup</p>
+                <h2 id="setup-title" class="text-3xl font-extrabold text-white uppercase tracking-wider">PRE-MATCH SETUP</h2>
+                <p id="setup-subtitle" class="text-xs text-slate-400 uppercase tracking-widest mt-1">Configure your ultimate lineup</p>
             </div>
 
             <!-- Single Player Mode Selector -->
-            <div id="single-player-mode-selector" class="w-full max-w-md mx-auto flex gap-4 mb-6 hidden">
-                <button id="btn-mode-exhibition" onclick="selectSubmode('exhibition')" class="flex-1 py-2.5 rounded-lg text-xs font-black uppercase transition-all bg-yellow-400 text-slate-950 border border-yellow-400">Exhibition Mode</button>
-                <button id="btn-mode-worldcup" onclick="selectSubmode('worldcup')" class="flex-1 py-2.5 rounded-lg text-xs font-black uppercase transition-all bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">🏆 World Cup 2026</button>
+            <div id="single-player-mode-selector" class="w-full max-w-md mx-auto flex gap-4 mb-6 hidden font-sans">
+                <button id="btn-mode-exhibition" onclick="selectSubmode('exhibition')" class="flex-1 py-2.5 rounded-lg text-xs font-black uppercase transition-all bg-yellow-400 text-slate-950 border border-yellow-400 font-bold">Exhibition Mode</button>
+                <button id="btn-mode-worldcup" onclick="selectSubmode('worldcup')" class="flex-1 py-2.5 rounded-lg text-xs font-black uppercase transition-all bg-slate-900 text-slate-400 border border-slate-800 hover:text-white font-bold">🏆 World Cup 2026</button>
             </div>
 
             <!-- WORLD CUP CONFIG PANEL -->
-            <div id="worldcup-config-panel" class="w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-xl p-6 mb-8 hidden mx-auto text-center">
+            <div id="worldcup-config-panel" class="w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-xl p-6 mb-4 hidden mx-auto text-center font-sans">
                 <span class="text-xs text-yellow-400 font-extrabold uppercase tracking-widest block mb-2">WORLD CUP 2026 CAMPAIGN</span>
                 <p class="text-xs text-slate-400 mb-6">Choose your nation. 48 Teams, 12 Groups. Can you lift the trophy?</p>
                 
                 <label class="block text-xs text-slate-300 mb-2 uppercase font-bold">Select Your Country</label>
                 <select id="select-wc-user-team" class="w-full max-w-md mx-auto bg-slate-950 border border-slate-800 rounded p-3 text-sm text-white focus:outline-none mb-6"></select>
                 
+                <!-- Difficulty selector specific for WC -->
+                <div class="flex flex-col gap-1 w-full max-w-md mx-auto mb-6">
+                    <span class="text-xs text-slate-400 uppercase tracking-widest font-bold">Tournament Difficulty</span>
+                    <div class="flex gap-2 justify-center mt-1">
+                        <button onclick="setDiff('easy')" class="diff-btn-easy px-3 py-1.5 rounded text-xs font-bold transition uppercase bg-slate-950 hover:bg-slate-800 text-slate-400">EASY</button>
+                        <button onclick="setDiff('medium')" class="diff-btn-medium px-3 py-1.5 rounded text-xs font-bold transition uppercase bg-yellow-400 text-black font-extrabold shadow">MEDIUM</button>
+                        <button onclick="setDiff('hard')" class="diff-btn-hard px-3 py-1.5 rounded text-xs font-bold transition uppercase bg-slate-950 hover:bg-slate-800 text-slate-400">HARD</button>
+                    </div>
+                </div>
+
                 <button onclick="startWorldCupCampaign()" class="w-full max-w-md mx-auto py-3.5 bg-gradient-to-r from-yellow-400 to-amber-500 text-black font-black uppercase tracking-widest text-sm rounded-lg shadow-lg block hover:scale-105 transition">START TOURNAMENT</button>
             </div>
 
             <!-- STANDARD EXHIBITION PANEL -->
-            <div id="setup-standard-panel">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full mb-8">
+            <div id="setup-standard-panel" class="w-full">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full mb-6">
                     <!-- Team 1 -->
-                    <div class="bg-slate-900/90 border-2 border-slate-800/80 rounded-2xl p-6 flex flex-col">
+                    <div class="bg-slate-900/90 border-2 border-slate-800/80 rounded-2xl p-6 flex flex-col font-sans">
                         <span class="text-xs text-cyan-400 font-extrabold uppercase tracking-widest mb-2">HOME SIDE (PLAYER 1)</span>
                         <select id="select-team1" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-cyan-500 mb-4"></select>
                         
@@ -136,7 +149,7 @@
                     </div>
 
                     <!-- Team 2 -->
-                    <div class="bg-slate-900/90 border-2 border-slate-800/80 rounded-2xl p-6 flex flex-col">
+                    <div class="bg-slate-900/90 border-2 border-slate-800/80 rounded-2xl p-6 flex flex-col font-sans">
                         <span class="text-xs text-yellow-400 font-extrabold uppercase tracking-widest mb-2">AWAY SIDE (PLAYER 2 / CPU)</span>
                         <select id="select-team2" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-yellow-500 mb-4"></select>
                         
@@ -157,36 +170,36 @@
                 <div class="w-full bg-slate-900/90 border border-slate-800/80 p-5 rounded-xl mb-6 flex flex-wrap gap-6 items-center justify-between">
                     <div class="flex flex-col gap-1">
                         <span class="text-xs text-slate-400 uppercase tracking-widest font-bold">Match Length</span>
-                        <div class="flex gap-2" id="duration-btns">
-                            <button onclick="setDuration(45)" id="dur-45" class="px-3 py-1.5 rounded text-xs font-bold transition bg-slate-950 hover:bg-slate-800 text-slate-400">45m (45s)</button>
+                        <div class="flex gap-2">
+                            <button onclick="setDuration(45)" id="dur-45" class="px-3 py-1.5 rounded text-xs font-bold transition bg-slate-950 hover:bg-slate-800 text-slate-400 font-sans">45m (45s)</button>
                             <button onclick="setDuration(90)" id="dur-90" class="px-3 py-1.5 rounded text-xs font-bold transition bg-cyan-500 text-black">90m (Classic)</button>
-                            <button onclick="setDuration(180)" id="dur-180" class="px-3 py-1.5 rounded text-xs font-bold transition bg-slate-950 hover:bg-slate-800 text-slate-400">180m (180s)</button>
+                            <button onclick="setDuration(180)" id="dur-180" class="px-3 py-1.5 rounded text-xs font-bold transition bg-slate-950 hover:bg-slate-800 text-slate-400 font-sans">180m (180s)</button>
                         </div>
                     </div>
 
                     <div id="ai-diff-container" class="flex flex-col gap-1 hidden">
                         <span class="text-xs text-slate-400 uppercase tracking-widest font-bold">CPU Difficulty</span>
-                        <div class="flex gap-2" id="diff-btns">
-                            <button onclick="setDiff('easy')" id="diff-easy" class="px-3 py-1.5 rounded text-xs font-bold transition uppercase bg-slate-950 hover:bg-slate-800 text-slate-400">EASY</button>
-                            <button onclick="setDiff('medium')" id="diff-medium" class="px-3 py-1.5 rounded text-xs font-bold transition uppercase bg-yellow-400 text-black">MEDIUM</button>
-                            <button onclick="setDiff('hard')" id="diff-hard" class="px-3 py-1.5 rounded text-xs font-bold transition uppercase bg-slate-950 hover:bg-slate-800 text-slate-400">HARD</button>
+                        <div class="flex gap-2">
+                            <button onclick="setDiff('easy')" class="diff-btn-easy px-3 py-1.5 rounded text-xs font-bold transition uppercase bg-slate-950 hover:bg-slate-800 text-slate-400 font-sans">EASY</button>
+                            <button onclick="setDiff('medium')" class="diff-btn-medium px-3 py-1.5 rounded text-xs font-bold transition uppercase bg-yellow-400 text-black font-extrabold shadow font-sans">MEDIUM</button>
+                            <button onclick="setDiff('hard')" class="diff-btn-hard px-3 py-1.5 rounded text-xs font-bold transition uppercase bg-slate-950 hover:bg-slate-800 text-slate-400 font-sans">HARD</button>
                         </div>
                     </div>
                 </div>
 
-                <button id="btn-launch" onclick="launchMatch()" class="w-full max-w-lg py-4 bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-500 text-slate-950 font-black tracking-widest uppercase rounded-xl shadow-lg hover:scale-105 transition active:scale-95 text-base mx-auto block">
+                <button id="btn-launch" onclick="launchMatch()" class="w-full max-w-lg py-4 bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-500 text-slate-950 font-black tracking-widest uppercase rounded-xl shadow-lg hover:scale-105 transition active:scale-95 text-base mx-auto block font-sans">
                     LAUNCH KICK-OFF MATCH
                 </button>
             </div>
 
             <!-- BACK BUTTON -->
-            <button onclick="showScreen('menu')" class="w-full max-w-lg mx-auto mt-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold uppercase rounded-lg border border-slate-700 transition block">
+            <button onclick="showScreen('menu')" class="w-full max-w-lg mx-auto mt-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold uppercase rounded-lg border border-slate-700 transition block font-sans">
                 Back to Home Screen
             </button>
         </main>
 
         <!-- WORLD CUP CAMPAIGN HUB SCREEN -->
-        <main id="screen-wc-hub" class="hidden flex-1 flex-col items-center px-4 py-4 w-full max-w-6xl mx-auto select-none">
+        <main id="screen-wc-hub" class="hidden flex-1 flex-col items-center px-4 py-4 w-full max-w-6xl mx-auto select-none font-sans">
             <div class="w-full bg-slate-900 border border-slate-800 rounded-xl p-5 mb-4 flex flex-col md:flex-row justify-between items-center gap-4 shadow-xl">
                 <div>
                     <h2 class="text-2xl font-black text-white uppercase flex items-center gap-2">
@@ -233,9 +246,9 @@
             </div>
 
             <!-- KNOCKOUT BRACKET TAB VIEW -->
-            <div id="wc-view-bracket" class="w-full hidden overflow-x-auto custom-scroll min-h-[65vh] p-4 bg-slate-900 border border-slate-800 rounded-xl shadow-lg">
-                <div class="flex gap-8 items-start min-w-[1400px] h-full" id="wc-bracket-container">
-                    <!-- Brackets Round nodes injected here -->
+            <div id="wc-view-bracket" class="w-full hidden overflow-x-auto custom-scroll min-h-[65vh] p-4 bg-slate-900 border border-slate-800 rounded-xl shadow-lg relative">
+                <div id="wc-bracket-container">
+                    <!-- Brackets columns populated horizontally via JS -->
                 </div>
             </div>
 
@@ -284,7 +297,7 @@
                 <div class="text-right font-sans">
                     <span class="text-[10px] bg-red-600 px-2 py-0.5 rounded text-white font-extrabold uppercase tracking-widest animate-pulse">LIVE</span>
                     <div class="text-2xl font-black font-mono mt-1 text-white">
-                        <span id="match-timer-val">0</span>'<span class="text-xs text-slate-400 font-sans font-medium">/ <span id="match-timer-max">90</span>'</span>
+                        <span id="match-timer-val">0</span>'<span class="text-xs text-slate-400 font-sans font-medium">/ 90'</span>
                     </div>
                 </div>
             </div>
@@ -314,7 +327,9 @@
 
                 <div id="overlay-ended" class="absolute inset-0 bg-slate-950/95 backdrop-blur-md flex flex-col items-center justify-center text-center p-8 hidden">
                     <div class="text-5xl mb-3">🏆</div>
-                    <h2 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-500 uppercase tracking-tighter mb-1">FULL-TIME WHISTLE</h2>
+                    <h2 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-500 uppercase tracking-tighter mb-1">
+                        FULL-TIME WHISTLE
+                    </h2>
                     <p class="text-slate-400 text-xs uppercase tracking-widest mb-6">Stadium final match results</p>
 
                     <div class="bg-slate-900 border-2 border-slate-800 p-6 rounded-2xl w-full max-w-sm mb-6 shadow-xl">
@@ -339,7 +354,7 @@
                 </div>
             </div>
 
-            <div class="w-full mt-4 flex justify-between items-center text-slate-400 text-xs bg-slate-900/40 px-4 py-2.5 rounded-lg border border-slate-800/60">
+            <div class="w-full mt-4 flex justify-between items-center text-slate-400 text-xs bg-slate-900/40 px-4 py-2.5 rounded-lg border border-slate-800/60 font-sans">
                 <div class="flex items-center gap-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
                     <span><strong>PLAYER 1 (Left)</strong>: Move with <kbd class="bg-slate-800 text-white px-1.5 py-0.5 rounded">W A S D</kbd> • Dash with <kbd class="bg-slate-800 text-white px-1.5 py-0.5 rounded ml-1">SPACE</kbd></span>
@@ -350,7 +365,7 @@
     </div>
 
     <!-- FOOTER -->
-    <footer class="z-10 text-center py-4 bg-slate-950 border-t border-slate-900 text-[10px] text-slate-500 tracking-wider relative">
+    <footer class="z-10 text-center py-4 bg-slate-950 border-t border-slate-900 text-[10px] text-slate-500 tracking-wider relative font-sans">
         <p>© 2026 KNUCKLEBALL SOCCER SIMULATOR. POWERED BY NEXT-GEN WEB PHYSICS. ALL RIGHTS RESERVED.</p>
         <p class="mt-0.5 text-[9px] text-cyan-500/40">KNUCKLEBALL CONSOLE EXPERIENCE EMULATION IN NATIVE HTML5</p>
     </footer>
@@ -376,56 +391,56 @@
             { name: "Sevilla", abbrev: "SEV", primary: "#FFFFFF", secondary: "#FF0000", rating: 79 }
         ];
 
-        // --- Data: 48 World Cup Teams ---
+        // --- Data: 48 World Cup Teams (Now with Emojis!) ---
         const WC_TEAMS = [
-            { name: "Mexico", abbrev: "MEX", rating: 80, primary: "#006847", secondary: "#FFFFFF", stripes: "V", badge: "#CE1126" },
-            { name: "South Africa", abbrev: "RSA", rating: 75, primary: "#007A4D", secondary: "#FFB612", stripes: "V", badge: "#000000" },
-            { name: "South Korea", abbrev: "KOR", rating: 82, primary: "#C20E1A", secondary: "#000000", stripes: "H", badge: "#FFFFFF" },
-            { name: "Czechia", abbrev: "CZE", rating: 79, primary: "#ED1B24", secondary: "#11457E", stripes: "V", badge: "#FFFFFF" },
-            { name: "Canada", abbrev: "CAN", rating: 78, primary: "#FF0000", secondary: "#FFFFFF", stripes: "V", badge: "#FF0000" },
-            { name: "Bosnia and Herzegovina", abbrev: "BIH", rating: 74, primary: "#002F6C", secondary: "#FFCD00", stripes: "H", badge: "#002F6C" },
-            { name: "Qatar", abbrev: "QAT", rating: 73, primary: "#8A1538", secondary: "#FFFFFF", stripes: "H", badge: "#8A1538" },
-            { name: "Switzerland", abbrev: "SUI", rating: 84, primary: "#FF0000", secondary: "#FFFFFF", stripes: "H", badge: "#FF0000" },
-            { name: "Brazil", abbrev: "BRA", rating: 92, primary: "#FEDF00", secondary: "#009B3A", stripes: "H", badge: "#002776" },
-            { name: "Morocco", abbrev: "MAR", rating: 86, primary: "#C1272D", secondary: "#006233", stripes: "V", badge: "#C1272D" },
-            { name: "Haiti", abbrev: "HAI", rating: 68, primary: "#00209F", secondary: "#D21034", stripes: "V", badge: "#FFFFFF" },
-            { name: "Scotland", abbrev: "SCO", rating: 78, primary: "#002B5C", secondary: "#FFFFFF", stripes: "V", badge: "#002B5C" },
-            { name: "United States", abbrev: "USA", rating: 81, primary: "#3C3B6E", secondary: "#B22234", stripes: "V", badge: "#FFFFFF" },
-            { name: "Paraguay", abbrev: "PAR", rating: 76, primary: "#D52B1E", secondary: "#0038A8", stripes: "V", badge: "#FFFFFF" },
-            { name: "Australia", abbrev: "AUS", rating: 79, primary: "#FFCD00", secondary: "#008751", stripes: "H", badge: "#000024" },
-            { name: "Turkey", abbrev: "TUR", rating: 81, primary: "#E30A17", secondary: "#FFFFFF", stripes: "V", badge: "#E30A17" },
-            { name: "Germany", abbrev: "GER", rating: 90, primary: "#FFFFFF", secondary: "#000000", stripes: "H", badge: "#FFCC00" },
-            { name: "Curaçao", abbrev: "CUW", rating: 67, primary: "#002B7F", secondary: "#F9E814", stripes: "H", badge: "#002B7F" },
-            { name: "Ivory Coast", abbrev: "CIV", rating: 80, primary: "#FF8200", secondary: "#009E60", stripes: "V", badge: "#FFFFFF" },
-            { name: "Ecuador", abbrev: "ECU", rating: 82, primary: "#FFDD00", secondary: "#0F204B", stripes: "V", badge: "#ED1C24" },
-            { name: "Netherlands", abbrev: "NED", rating: 89, primary: "#F36C21", secondary: "#FFFFFF", stripes: "V", badge: "#21468B" },
-            { name: "Japan", abbrev: "JPN", rating: 84, primary: "#000555", secondary: "#FFFFFF", stripes: "H", badge: "#BC002D" },
-            { name: "Sweden", abbrev: "SWE", rating: 81, primary: "#FECC02", secondary: "#006AA7", stripes: "V", badge: "#FECC02" },
-            { name: "Tunisia", abbrev: "TUN", rating: 75, primary: "#E30A17", secondary: "#FFFFFF", stripes: "H", badge: "#E30A17" },
-            { name: "Belgium", abbrev: "BEL", rating: 87, primary: "#E30A17", secondary: "#000000", stripes: "V", badge: "#FDDA24" },
-            { name: "Egypt", abbrev: "EGY", rating: 80, primary: "#CE1126", secondary: "#000000", stripes: "H", badge: "#FFFFFF" },
-            { name: "Iran", abbrev: "IRN", rating: 77, primary: "#239F40", secondary: "#DA121A", stripes: "V", badge: "#FFFFFF" },
-            { name: "New Zealand", abbrev: "NZL", rating: 72, primary: "#000000", secondary: "#FFFFFF", stripes: "V", badge: "#000000" },
-            { name: "Spain", abbrev: "ESP", rating: 91, primary: "#C60B1E", secondary: "#FFC400", stripes: "H", badge: "#C60B1E" },
-            { name: "Cape Verde", abbrev: "CPV", rating: 74, primary: "#003893", secondary: "#CF2027", stripes: "V", badge: "#FFFFFF" },
-            { name: "Saudi Arabia", abbrev: "KSA", rating: 74, primary: "#006C35", secondary: "#FFFFFF", stripes: "V", badge: "#006C35" },
-            { name: "Uruguay", abbrev: "URU", rating: 83, primary: "#55B5E5", secondary: "#000000", stripes: "H", badge: "#FCBF49" },
-            { name: "France", abbrev: "FRA", rating: 93, primary: "#002395", secondary: "#ED2939", stripes: "V", badge: "#FFFFFF" },
-            { name: "Senegal", abbrev: "SEN", rating: 83, primary: "#00853F", secondary: "#FDEF42", stripes: "V", badge: "#E31B23" },
-            { name: "Iraq", abbrev: "IRQ", rating: 74, primary: "#007A3D", secondary: "#000000", stripes: "H", badge: "#FFFFFF" },
-            { name: "Norway", abbrev: "NOR", rating: 80, primary: "#BA0C2F", secondary: "#00205B", stripes: "V", badge: "#FFFFFF" },
-            { name: "Argentina", abbrev: "ARG", rating: 94, primary: "#43A1D5", secondary: "#FFFFFF", stripes: "V", badge: "#FCBF49" },
-            { name: "Algeria", abbrev: "ALG", rating: 78, primary: "#006233", secondary: "#FFFFFF", stripes: "V", badge: "#D21034" },
-            { name: "Austria", abbrev: "AUT", rating: 81, primary: "#ED2939", secondary: "#FFFFFF", stripes: "H", badge: "#ED2939" },
-            { name: "Jordan", abbrev: "JOR", rating: 72, primary: "#000000", secondary: "#CE1126", stripes: "H", badge: "#FFFFFF" },
-            { name: "Portugal", abbrev: "POR", rating: 91, primary: "#FF0000", secondary: "#006600", stripes: "V", badge: "#FECC00" },
-            { name: "DR Congo", abbrev: "COD", rating: 74, primary: "#007FFF", secondary: "#CE102F", stripes: "H", badge: "#FDD116" },
-            { name: "Uzbekistan", abbrev: "UZB", rating: 73, primary: "#0099B5", secondary: "#111111", stripes: "H", badge: "#FFFFFF" },
-            { name: "Colombia", abbrev: "COL", rating: 84, primary: "#FCD116", secondary: "#003893", stripes: "V", badge: "#CE1126" },
-            { name: "England", abbrev: "ENG", rating: 92, primary: "#FFFFFF", secondary: "#CE1124", stripes: "V", badge: "#00205B" },
-            { name: "Croatia", abbrev: "CRO", rating: 85, primary: "#FF0000", secondary: "#FFFFFF", stripes: "V", badge: "#00205B" },
-            { name: "Ghana", abbrev: "GHA", rating: 76, primary: "#FFFFFF", secondary: "#CE1126", stripes: "V", badge: "#000000" },
-            { name: "Panama", abbrev: "PAN", rating: 74, primary: "#DA121A", secondary: "#002F6C", stripes: "H", badge: "#FFFFFF" }
+            { name: "Mexico", emoji: "🇲🇽", abbrev: "MEX", rating: 80, primary: "#006847", secondary: "#FFFFFF", stripes: "V", badge: "#CE1126" },
+            { name: "South Africa", emoji: "🇿🇦", abbrev: "RSA", rating: 75, primary: "#007A4D", secondary: "#FFB612", stripes: "V", badge: "#000000" },
+            { name: "South Korea", emoji: "🇰🇷", abbrev: "KOR", rating: 82, primary: "#C20E1A", secondary: "#000000", stripes: "H", badge: "#FFFFFF" },
+            { name: "Czechia", emoji: "🇨🇿", abbrev: "CZE", rating: 79, primary: "#ED1B24", secondary: "#11457E", stripes: "V", badge: "#FFFFFF" },
+            { name: "Canada", emoji: "🇨🇦", abbrev: "CAN", rating: 78, primary: "#FF0000", secondary: "#FFFFFF", stripes: "V", badge: "#FF0000" },
+            { name: "Bosnia and Herzegovina", emoji: "🇧🇦", abbrev: "BIH", rating: 74, primary: "#002F6C", secondary: "#FFCD00", stripes: "H", badge: "#002F6C" },
+            { name: "Qatar", emoji: "🇶🇦", abbrev: "QAT", rating: 73, primary: "#8A1538", secondary: "#FFFFFF", stripes: "H", badge: "#8A1538" },
+            { name: "Switzerland", emoji: "🇨🇭", abbrev: "SUI", rating: 84, primary: "#FF0000", secondary: "#FFFFFF", stripes: "H", badge: "#FF0000" },
+            { name: "Brazil", emoji: "🇧🇷", abbrev: "BRA", rating: 92, primary: "#FEDF00", secondary: "#009B3A", stripes: "H", badge: "#002776" },
+            { name: "Morocco", emoji: "🇲🇦", abbrev: "MAR", rating: 86, primary: "#C1272D", secondary: "#006233", stripes: "V", badge: "#C1272D" },
+            { name: "Haiti", emoji: "🇭🇹", abbrev: "HAI", rating: 68, primary: "#00209F", secondary: "#D21034", stripes: "V", badge: "#FFFFFF" },
+            { name: "Scotland", emoji: "🏴󠁧󠁢󠁳󠁣󠁴󠁿", abbrev: "SCO", rating: 78, primary: "#002B5C", secondary: "#FFFFFF", stripes: "V", badge: "#002B5C" },
+            { name: "United States", emoji: "🇺🇸", abbrev: "USA", rating: 81, primary: "#3C3B6E", secondary: "#B22234", stripes: "V", badge: "#FFFFFF" },
+            { name: "Paraguay", emoji: "🇵🇾", abbrev: "PAR", rating: 76, primary: "#D52B1E", secondary: "#0038A8", stripes: "V", badge: "#FFFFFF" },
+            { name: "Australia", emoji: "🇦🇺", abbrev: "AUS", rating: 79, primary: "#FFCD00", secondary: "#008751", stripes: "H", badge: "#000024" },
+            { name: "Turkey", emoji: "🇹🇷", abbrev: "TUR", rating: 81, primary: "#E30A17", secondary: "#FFFFFF", stripes: "V", badge: "#E30A17" },
+            { name: "Germany", emoji: "🇩🇪", abbrev: "GER", rating: 90, primary: "#FFFFFF", secondary: "#000000", stripes: "H", badge: "#FFCC00" },
+            { name: "Curaçao", emoji: "🇨🇼", abbrev: "CUW", rating: 67, primary: "#002B7F", secondary: "#F9E814", stripes: "H", badge: "#002B7F" },
+            { name: "Ivory Coast", emoji: "🇨🇮", abbrev: "CIV", rating: 80, primary: "#FF8200", secondary: "#009E60", stripes: "V", badge: "#FFFFFF" },
+            { name: "Ecuador", emoji: "🇪🇨", abbrev: "ECU", rating: 82, primary: "#FFDD00", secondary: "#0F204B", stripes: "V", badge: "#ED1C24" },
+            { name: "Netherlands", emoji: "🇳🇱", abbrev: "NED", rating: 89, primary: "#F36C21", secondary: "#FFFFFF", stripes: "V", badge: "#21468B" },
+            { name: "Japan", emoji: "🇯🇵", abbrev: "JPN", rating: 84, primary: "#000555", secondary: "#FFFFFF", stripes: "H", badge: "#BC002D" },
+            { name: "Sweden", emoji: "🇸🇪", abbrev: "SWE", rating: 81, primary: "#FECC02", secondary: "#006AA7", stripes: "V", badge: "#FECC02" },
+            { name: "Tunisia", emoji: "🇹🇳", abbrev: "TUN", rating: 75, primary: "#E30A17", secondary: "#FFFFFF", stripes: "H", badge: "#E30A17" },
+            { name: "Belgium", emoji: "🇧🇪", abbrev: "BEL", rating: 87, primary: "#E30A17", secondary: "#000000", stripes: "V", badge: "#FDDA24" },
+            { name: "Egypt", emoji: "🇪🇬", abbrev: "EGY", rating: 80, primary: "#CE1126", secondary: "#000000", stripes: "H", badge: "#FFFFFF" },
+            { name: "Iran", emoji: "🇮🇷", abbrev: "IRN", rating: 77, primary: "#239F40", secondary: "#DA121A", stripes: "V", badge: "#FFFFFF" },
+            { name: "New Zealand", emoji: "🇳🇿", abbrev: "NZL", rating: 72, primary: "#000000", secondary: "#FFFFFF", stripes: "V", badge: "#000000" },
+            { name: "Spain", emoji: "🇪🇸", abbrev: "ESP", rating: 91, primary: "#C60B1E", secondary: "#FFC400", stripes: "H", badge: "#C60B1E" },
+            { name: "Cape Verde", emoji: "🇨🇻", abbrev: "CPV", rating: 74, primary: "#003893", secondary: "#CF2027", stripes: "V", badge: "#FFFFFF" },
+            { name: "Saudi Arabia", emoji: "🇸🇦", abbrev: "KSA", rating: 74, primary: "#006C35", secondary: "#FFFFFF", stripes: "V", badge: "#006C35" },
+            { name: "Uruguay", emoji: "🇺🇾", abbrev: "URU", rating: 83, primary: "#55B5E5", secondary: "#000000", stripes: "H", badge: "#FCBF49" },
+            { name: "France", emoji: "🇫🇷", abbrev: "FRA", rating: 93, primary: "#002395", secondary: "#ED2939", stripes: "V", badge: "#FFFFFF" },
+            { name: "Senegal", emoji: "🇸🇳", abbrev: "SEN", rating: 83, primary: "#00853F", secondary: "#FDEF42", stripes: "V", badge: "#E31B23" },
+            { name: "Iraq", emoji: "🇮🇶", abbrev: "IRQ", rating: 74, primary: "#007A3D", secondary: "#000000", stripes: "H", badge: "#FFFFFF" },
+            { name: "Norway", emoji: "🇳🇴", abbrev: "NOR", rating: 80, primary: "#BA0C2F", secondary: "#00205B", stripes: "V", badge: "#FFFFFF" },
+            { name: "Argentina", emoji: "🇦🇷", abbrev: "ARG", rating: 94, primary: "#43A1D5", secondary: "#FFFFFF", stripes: "V", badge: "#FCBF49" },
+            { name: "Algeria", emoji: "🇩🇿", abbrev: "ALG", rating: 78, primary: "#006233", secondary: "#FFFFFF", stripes: "V", badge: "#D21034" },
+            { name: "Austria", emoji: "🇦🇹", abbrev: "AUT", rating: 81, primary: "#ED2939", secondary: "#FFFFFF", stripes: "H", badge: "#ED2939" },
+            { name: "Jordan", emoji: "🇯🇴", abbrev: "JOR", rating: 72, primary: "#000000", secondary: "#CE1126", stripes: "H", badge: "#FFFFFF" },
+            { name: "Portugal", emoji: "🇵🇹", abbrev: "POR", rating: 91, primary: "#FF0000", secondary: "#006600", stripes: "V", badge: "#FECC00" },
+            { name: "DR Congo", emoji: "🇨🇩", abbrev: "COD", rating: 74, primary: "#007FFF", secondary: "#CE102F", stripes: "H", badge: "#FDD116" },
+            { name: "Uzbekistan", emoji: "🇺🇿", abbrev: "UZB", rating: 73, primary: "#0099B5", secondary: "#111111", stripes: "H", badge: "#FFFFFF" },
+            { name: "Colombia", emoji: "🇨🇴", abbrev: "COL", rating: 84, primary: "#FCD116", secondary: "#003893", stripes: "V", badge: "#CE1126" },
+            { name: "England", emoji: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", abbrev: "ENG", rating: 92, primary: "#FFFFFF", secondary: "#CE1124", stripes: "V", badge: "#00205B" },
+            { name: "Croatia", emoji: "🇭🇷", abbrev: "CRO", rating: 85, primary: "#FF0000", secondary: "#FFFFFF", stripes: "V", badge: "#00205B" },
+            { name: "Ghana", emoji: "🇬🇭", abbrev: "GHA", rating: 76, primary: "#FFFFFF", secondary: "#CE1126", stripes: "V", badge: "#000000" },
+            { name: "Panama", emoji: "🇵🇦", abbrev: "PAN", rating: 74, primary: "#DA121A", secondary: "#002F6C", stripes: "H", badge: "#FFFFFF" }
         ];
 
         const WC_GROUPS_SETUP = {
@@ -443,14 +458,14 @@
             "Group L": ["England", "Croatia", "Ghana", "Panama"]
         };
 
-        // --- Core State ---
+        // --- State ---
         let screen = 'menu';
         let gameMode = 'single';
         let difficulty = 'medium';
         let matchDuration = 90;
         let submode = 'exhibition'; // exhibition, worldcup
 
-        // Current exhibition match players
+        // Current match players
         let team1 = STANDARD_TEAMS[0]; 
         let team2 = STANDARD_TEAMS[1]; 
         
@@ -464,11 +479,12 @@
         let wcUserTeam = null;
         let wcGroupStages = {};
         let wcMatchdays = [];
-        let wcCurrentMatchday = 0; // 0, 1, 2
-        let wcKnockoutRound = ''; // r32, r16, qf, sf, third, final, ended
+        let wcCurrentMatchday = 0; 
+        let wcKnockoutRound = ''; 
         let wcKnockoutMatches = [];
+        let wcBracketHistory = { r32: [], r16: [], qf: [], sf: [], third: [], final: [] };
         let activeWCHubTab = 'standings';
-        let activeWCUserMatchIndex = -1; // -1 if eliminated or not their match
+        let activeWCUserMatchIndex = -1; 
 
         // --- Physics Engine variables ---
         let canvas, ctx;
@@ -498,7 +514,7 @@
 
         window.showScreen = (s) => {
             screen = s;
-            ['screen-menu', 'screen-how-to-play', 'screen-setup', 'screen-wc-hub', 'screen-game'].forEach(id => {
+            ['screen-menu', 'screen-how-to-play', 'screen-setup', 'screen-lobby', 'screen-game', 'screen-wc-hub'].forEach(id => {
                 const el = $(id);
                 if (el) el.classList.add('hidden');
             });
@@ -512,12 +528,17 @@
                 const modeSelector = $('single-player-mode-selector');
                 if (modeSelector) modeSelector.classList.toggle('hidden', gameMode !== 'single');
                 
-                // Default to exhibition on load
                 if (gameMode === 'single') {
                     selectSubmode('exhibition');
                 } else {
-                    selectSubmode('exhibition'); // Local is always exhibition
+                    selectSubmode('exhibition'); 
                 }
+            }
+
+            // High compatibility exits
+            const exitBtn = $('btn-exit');
+            if (exitBtn) {
+                exitBtn.classList.toggle('hidden', s !== 'game' && s !== 'lobby' && s !== 'wc-hub');
             }
         };
 
@@ -535,12 +556,12 @@
 
         window.setDiff = (d) => {
             difficulty = d;
-            ['diff-easy', 'diff-medium', 'diff-hard'].forEach(id => {
-                const el = $(id);
-                if (el) el.className = "px-3 py-1.5 rounded text-xs font-bold transition uppercase bg-slate-950 hover:bg-slate-800 text-slate-400";
+            ['easy', 'medium', 'hard'].forEach(level => {
+                document.querySelectorAll(`.diff-btn-${level}`).forEach(el => {
+                    el.className = `diff-btn-${level} px-3 py-1.5 rounded text-xs font-bold transition uppercase ` + 
+                        (level === d ? "bg-yellow-400 text-black font-extrabold shadow" : "bg-slate-950 hover:bg-slate-800 text-slate-400");
+                });
             });
-            const diffEl = $(`diff-${d}`);
-            if (diffEl) diffEl.className = "px-3 py-1.5 rounded text-xs font-bold transition uppercase bg-yellow-400 text-black";
         };
 
         // --- SUBMODE SELECTOR ---
@@ -550,8 +571,8 @@
             
             const bEx = $('btn-mode-exhibition');
             const bWc = $('btn-mode-worldcup');
-            if (bEx) bEx.className = isEx ? "flex-1 py-2.5 rounded-lg text-xs font-black uppercase transition-all bg-yellow-400 text-slate-950 border border-yellow-400" : "flex-1 py-2.5 rounded-lg text-xs font-black uppercase transition-all bg-slate-900 text-slate-400 border border-slate-800 hover:text-white";
-            if (bWc) bWc.className = !isEx ? "flex-1 py-2.5 rounded-lg text-xs font-black uppercase transition-all bg-yellow-400 text-slate-950 border border-yellow-400" : "flex-1 py-2.5 rounded-lg text-xs font-black uppercase transition-all bg-slate-900 text-slate-400 border border-slate-800 hover:text-white";
+            if (bEx) bEx.className = isEx ? "flex-1 py-2.5 rounded-lg text-xs font-black uppercase transition-all bg-yellow-400 text-slate-950 border border-yellow-400 font-bold" : "flex-1 py-2.5 rounded-lg text-xs font-black uppercase transition-all bg-slate-900 text-slate-400 border border-slate-800 hover:text-white font-bold";
+            if (bWc) bWc.className = !isEx ? "flex-1 py-2.5 rounded-lg text-xs font-black uppercase transition-all bg-yellow-400 text-slate-950 border border-yellow-400 font-bold" : "flex-1 py-2.5 rounded-lg text-xs font-black uppercase transition-all bg-slate-900 text-slate-400 border border-slate-800 hover:text-white font-bold";
 
             const stdPanel = $('setup-standard-panel');
             const wcPanel = $('worldcup-config-panel');
@@ -586,7 +607,7 @@
             // Populate World Cup selector
             const wcSel = $('select-wc-user-team');
             if (wcSel) {
-                let wcOptions = [...WC_TEAMS].sort((a,b)=>a.name.localeCompare(b.name)).map(t => `<option value="${t.name}">${t.name}</option>`).join("");
+                let wcOptions = [...WC_TEAMS].sort((a,b)=>a.name.localeCompare(b.name)).map(t => `<option value="${t.name}">${t.emoji} ${t.name}</option>`).join("");
                 wcSel.innerHTML = wcOptions;
             }
 
@@ -594,11 +615,12 @@
         }
 
         function updateTeamCards() {
+            const t1Ab = $('t1-bg-abbrev');
+            const t1J = $('t1-jersey');
+            const t1Jt = $('t1-jersey-text');
+            const t1Nd = $('t1-name-display');
+            
             if (team1) {
-                const t1Ab = $('t1-bg-abbrev');
-                const t1J = $('t1-jersey');
-                const t1Jt = $('t1-jersey-text');
-                const t1Nd = $('t1-name-display');
                 if (t1Ab) t1Ab.innerText = team1.abbrev;
                 if (t1J) {
                     t1J.style.backgroundColor = team1.primary;
@@ -608,11 +630,11 @@
                 if (t1Nd) t1Nd.innerText = team1.name;
             }
 
+            const t2Ab = $('t2-bg-abbrev');
+            const t2J = $('t2-jersey');
+            const t2Jt = $('t2-jersey-text');
+            const t2Nd = $('t2-name-display');
             if (team2) {
-                const t2Ab = $('t2-bg-abbrev');
-                const t2J = $('t2-jersey');
-                const t2Jt = $('t2-jersey-text');
-                const t2Nd = $('t2-name-display');
                 if (t2Ab) t2Ab.innerText = team2.abbrev;
                 if (t2J) {
                     t2J.style.backgroundColor = team2.primary;
@@ -627,7 +649,7 @@
         window.startWorldCupCampaign = () => {
             const userTeamName = $('select-wc-user-team').value;
             wcUserTeam = WC_TEAMS.find(t => t.name === userTeamName);
-            $('wc-hub-player-team').innerText = wcUserTeam.name;
+            $('wc-hub-player-team').innerText = `${wcUserTeam.emoji} ${wcUserTeam.name}`;
             
             // Build Groups Standings Object
             wcGroupStages = {};
@@ -635,7 +657,7 @@
                 wcGroupStages[gName] = WC_GROUPS_SETUP[gName].map(cName => {
                     const country = WC_TEAMS.find(t => t.name === cName);
                     return {
-                        name: country.name, abbrev: country.abbrev, rating: country.rating,
+                        name: country.name, abbrev: country.abbrev, rating: country.rating, emoji: country.emoji,
                         played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0
                     };
                 });
@@ -646,6 +668,7 @@
             wcCurrentMatchday = 0;
             wcKnockoutRound = '';
             wcKnockoutMatches = [];
+            wcBracketHistory = { r32: [], r16: [], qf: [], sf: [], third: [], final: [] };
 
             const md1 = []; const md2 = []; const md3 = [];
 
@@ -752,7 +775,7 @@
                         <tr class="border-b border-slate-800/40 py-2 hover:bg-slate-950/20 ${isPlayer}">
                             <td class="py-2 font-semibold flex items-center gap-2">
                                 <span class="${rowBorder}">${idx+1}.</span>
-                                <span>${team.name}</span>
+                                <span>${team.emoji} ${team.name}</span>
                             </td>
                             <td class="text-center py-2">${team.played}</td>
                             <td class="text-center py-2 text-slate-400">${sign}${gd}</td>
@@ -783,7 +806,7 @@
                 let gdB = b.goalsFor - b.goalsAgainst;
                 if (b.points !== a.points) return b.points - a.points;
                 if (gdB !== gdA) return gdB - gdA;
-                return b.goalsFor - a.goalsFor;
+                return b.goalsFor - a.goalsFor; 
             });
 
             let thirdHtml = `<table class="w-full text-xs text-left">
@@ -803,7 +826,7 @@
                     <tr class="border-b border-slate-800/40 hover:bg-slate-950/20 ${highlight}">
                         <td class="py-1.5 font-semibold flex items-center gap-1">
                             <span class="${isAdvancing}">${idx+1}.</span>
-                            <span>${team.name}</span>
+                            <span>${team.emoji} ${team.name}</span>
                         </td>
                         <td class="text-center py-1.5 text-slate-400">${gd > 0 ? "+" : ""}${gd}</td>
                         <td class="text-center py-1.5 font-extrabold">${team.points}</td>
@@ -866,14 +889,14 @@
                         <div class="absolute top-2 left-2 text-[10px] text-slate-500 font-extrabold uppercase">${match.group || 'KNOCKOUT'}</div>
                         <div class="flex w-full justify-around items-center gap-2 mt-2">
                             <div class="flex flex-col items-center gap-1 w-1/3 text-center">
-                                <div class="w-8 h-8 rounded-full border-2 border-white/10" style="background-color: ${t1Country.primary}"></div>
+                                <span class="text-2xl">${t1Country.emoji}</span>
                                 <span class="text-xs font-extrabold tracking-wider truncate max-w-full">${match.t1}</span>
                             </div>
                             <div class="flex flex-col items-center">
                                 <span class="text-lg font-mono font-black tracking-tight text-white">${scoreLabel}</span>
                             </div>
                             <div class="flex flex-col items-center gap-1 w-1/3 text-center">
-                                <div class="w-8 h-8 rounded-full border-2 border-white/10" style="background-color: ${t2Country.primary}"></div>
+                                <span class="text-2xl">${t2Country.emoji}</span>
                                 <span class="text-xs font-extrabold tracking-wider truncate max-w-full">${match.t2}</span>
                             </div>
                         </div>
@@ -882,7 +905,7 @@
                 `;
             });
             
-            // If the user's match is not active and matches still need playing, prompt auto-sim button at the top
+            // Auto Sim logic prompt
             if (activeWCUserMatchIndex === -1 && !list.every(m => m.played)) {
                 container.innerHTML = `
                     <div class="col-span-1 md:col-span-2 text-center bg-slate-800/40 border border-slate-700 p-4 rounded-xl mb-4">
@@ -893,26 +916,32 @@
             }
         }
 
+        // --- DYNAMIC SIMULATION CALCULATION WITH RATING ACCURACY ---
         function calculateWeightedSim(teamA, teamB, isKnockout = false) {
-            let lambda1 = (teamA.rating / 25) * (0.85 + Math.random() * 0.3);
-            let lambda2 = (teamB.rating / 25) * (0.85 + Math.random() * 0.3);
+            let diff = (teamA.rating - teamB.rating) / 10; // e.g. 94 - 67 = 2.7
+            let expectedGoalsA = Math.max(0.4, 1.4 + diff * 0.45);
+            let expectedGoalsB = Math.max(0.4, 1.4 - diff * 0.45);
 
-            let s1 = Math.floor(Math.random() * (lambda1 + 1));
-            let s2 = Math.floor(Math.random() * (lambda2 + 1));
+            // Goals calculation with a healthy dose of randomized variance to allow upsets
+            let s1 = Math.round(Math.max(0, expectedGoalsA + (Math.random() - 0.5) * 3));
+            let s2 = Math.round(Math.max(0, expectedGoalsB + (Math.random() - 0.5) * 3));
 
             let p1 = null, p2 = null;
 
             if (isKnockout && s1 === s2) {
-                let et1 = Math.floor(Math.random() * 2);
-                let et2 = Math.floor(Math.random() * 2);
+                // Simulate extra time
+                let etDiff = diff * 0.15;
+                let et1 = Math.round(Math.max(0, 0.4 + etDiff + (Math.random() - 0.5) * 1.5));
+                let et2 = Math.round(Math.max(0, 0.4 - etDiff + (Math.random() - 0.5) * 1.5));
                 s1 += et1;
                 s2 += et2;
 
                 if (s1 === s2) {
+                    // Penalty Shootout simulation on tie
                     p1 = 0; p2 = 0;
                     while (p1 === p2) {
-                        p1 = Math.floor(Math.random() * 5) + 2;
-                        p2 = Math.floor(Math.random() * 5) + 2;
+                        p1 = Math.floor(Math.random() * 5) + 3;
+                        p2 = Math.floor(Math.random() * 5) + 3;
                     }
                 }
             }
@@ -937,7 +966,7 @@
                 updateGroupStats(match.group, match.t1, match.t2, match.s1, match.s2);
             }
 
-            // After simulating your match, simulate all the others automatically.
+            // Immediately simulate rest of matchweek
             window.simRemainingMatchdayMatches();
         };
 
@@ -991,7 +1020,6 @@
                 }
                 match.played = true;
 
-                // Simple simulated penalty decider if it was a knockout draw
                 if (gameState === 'ended' && score1 === score2 && !!wcKnockoutRound) {
                     match.p1 = Math.floor(Math.random() * 4) + 3;
                     match.p2 = match.p1 + (Math.random() > 0.5 ? 1 : -1);
@@ -1005,7 +1033,6 @@
             
             // Auto simulate the rest!
             window.simRemainingMatchdayMatches();
-            
             openWCHub();
         };
 
@@ -1044,7 +1071,8 @@
         }
 
         function transitionToRoundOf32() {
-            let qualifiers = []; 
+            wcKnockoutRound = 'r32'; // Assigned correctly to advance to R32 and unlock brackets
+            let groupStandingsMap = {};
             let thirdPlacers = [];
 
             for (let gName in wcGroupStages) {
@@ -1053,24 +1081,52 @@
                     if (b.points !== a.points) return b.points - a.points;
                     if (gdB !== gdA) return gdB - gdA; return b.goalsFor - a.goalsFor;
                 });
-                qualifiers.push(sorted[0].name); 
-                qualifiers.push(sorted[1].name); 
-                thirdPlacers.push({ name: sorted[2].name, points: sorted[2].points, gd: sorted[2].goalsFor - sorted[2].goalsAgainst, gf: sorted[2].goalsFor });
+                groupStandingsMap[gName] = sorted;
+                thirdPlacers.push({
+                    name: sorted[2].name,
+                    points: sorted[2].points,
+                    gd: sorted[2].goalsFor - sorted[2].goalsAgainst,
+                    gf: sorted[2].goalsFor,
+                    group: gName
+                });
             }
 
-            thirdPlacers.sort((a,b) => {
-                if(b.points !== a.points) return b.points - a.points;
-                if(b.gd !== a.gd) return b.gd - a.gd;
+            thirdPlacers.sort((a, b) => {
+                if (b.points !== a.points) return b.points - a.points;
+                if (b.gd !== a.gd) return b.gd - a.gd;
                 return b.gf - a.gf;
             });
 
-            for(let i=0; i<8; i++) { qualifiers.push(thirdPlacers[i].name); }
+            let top8Thirds = thirdPlacers.slice(0, 8);
 
-            wcKnockoutRound = 'r32';
-            wcKnockoutMatches = [];
-            for(let i=0; i<32; i += 2) {
-                wcKnockoutMatches.push({ t1: qualifiers[i], t2: qualifiers[i+1], s1: null, s2: null, played: false });
-            }
+            const getWinner = (gLetter) => groupStandingsMap["Group " + gLetter][0].name;
+            const getRunner = (gLetter) => groupStandingsMap["Group " + gLetter][1].name;
+            const getThirdSlot = (index) => top8Thirds[index] ? top8Thirds[index].name : "TBD";
+
+            // Pairs exactly as in the images
+            wcKnockoutMatches = [
+                // Left Side (Matches 0 - 7)
+                { t1: getWinner('A'), t2: getThirdSlot(0), s1: null, s2: null, played: false, group: "Left - Match 1" },
+                { t1: getWinner('C'), t2: getRunner('F'), s1: null, s2: null, played: false, group: "Left - Match 2" },
+                { t1: getWinner('E'), t2: getThirdSlot(1), s1: null, s2: null, played: false, group: "Left - Match 3" },
+                { t1: getRunner('I'), t2: getRunner('L'), s1: null, s2: null, played: false, group: "Left - Match 4" },
+                { t1: getWinner('B'), t2: getThirdSlot(2), s1: null, s2: null, played: false, group: "Left - Match 5" },
+                { t1: getRunner('D'), t2: getRunner('G'), s1: null, s2: null, played: false, group: "Left - Match 6" },
+                { t1: getWinner('H'), t2: getRunner('J'), s1: null, s2: null, played: false, group: "Left - Match 7" },
+                { t1: getWinner('K'), t2: getThirdSlot(3), s1: null, s2: null, played: false, group: "Left - Match 8" },
+
+                // Right Side (Matches 8 - 15)
+                { t1: getWinner('L'), t2: getThirdSlot(4), s1: null, s2: null, played: false, group: "Right - Match 9" },
+                { t1: getWinner('I'), t2: getRunner('E'), s1: null, s2: null, played: false, group: "Right - Match 10" },
+                { t1: getWinner('J'), t2: getRunner('H'), s1: null, s2: null, played: false, group: "Right - Match 11" },
+                { t1: getWinner('F'), t2: getRunner('C'), s1: null, s2: null, played: false, group: "Right - Match 12" },
+                { t1: getWinner('G'), t2: getThirdSlot(5), s1: null, s2: null, played: false, group: "Right - Match 13" },
+                { t1: getRunner('A'), t2: getRunner('B'), s1: null, s2: null, played: false, group: "Right - Match 14" },
+                { t1: getWinner('D'), t2: getThirdSlot(6), s1: null, s2: null, played: false, group: "Right - Match 15" },
+                { t1: getRunner('K'), t2: getThirdSlot(7), s1: null, s2: null, played: false, group: "Right - Match 16" }
+            ];
+
+            wcBracketHistory.r32 = wcKnockoutMatches;
 
             updateWCHubStageUI();
             switchWCTab('bracket');
@@ -1085,22 +1141,44 @@
 
             if (wcKnockoutRound === 'r32') {
                 wcKnockoutRound = 'r16'; wcKnockoutMatches = [];
-                for(let i=0; i<16; i+=2) wcKnockoutMatches.push({ t1: winners[i], t2: winners[i+1], s1: null, s2: null, played: false });
+                // Left side R16
+                for(let i=0; i<8; i += 2) {
+                    wcKnockoutMatches.push({ t1: winners[i], t2: winners[i+1], s1: null, s2: null, played: false, group: `Left R16` });
+                }
+                // Right side R16
+                for(let i=8; i<16; i += 2) {
+                    wcKnockoutMatches.push({ t1: winners[i], t2: winners[i+1], s1: null, s2: null, played: false, group: `Right R16` });
+                }
+                wcBracketHistory.r16 = wcKnockoutMatches;
             } else if (wcKnockoutRound === 'r16') {
                 wcKnockoutRound = 'qf'; wcKnockoutMatches = [];
-                for(let i=0; i<8; i+=2) wcKnockoutMatches.push({ t1: winners[i], t2: winners[i+1], s1: null, s2: null, played: false });
+                // Left QF
+                for(let i=0; i<4; i += 2) {
+                    wcKnockoutMatches.push({ t1: winners[i], t2: winners[i+1], s1: null, s2: null, played: false, group: `Left QF` });
+                }
+                // Right QF
+                for(let i=4; i<8; i += 2) {
+                    wcKnockoutMatches.push({ t1: winners[i], t2: winners[i+1], s1: null, s2: null, played: false, group: `Right QF` });
+                }
+                wcBracketHistory.qf = wcKnockoutMatches;
             } else if (wcKnockoutRound === 'qf') {
                 wcKnockoutRound = 'sf'; wcKnockoutMatches = [];
-                for(let i=0; i<4; i+=2) wcKnockoutMatches.push({ t1: winners[i], t2: winners[i+1], s1: null, s2: null, played: false });
+                // Left SF
+                wcKnockoutMatches.push({ t1: winners[0], t2: winners[1], s1: null, s2: null, played: false, group: `Left SF` });
+                // Right SF
+                wcKnockoutMatches.push({ t1: winners[2], t2: winners[3], s1: null, s2: null, played: false, group: `Right SF` });
+                wcBracketHistory.sf = wcKnockoutMatches;
             } else if (wcKnockoutRound === 'sf') {
                 let losers = wcKnockoutMatches.map(m => {
                     if (m.s1 > m.s2) return m.t2; if (m.s2 > m.s1) return m.t1; return m.p1 > m.p2 ? m.t2 : m.t1;
                 });
                 wcKnockoutRound = 'third';
                 wcKnockoutMatches = [
-                    { t1: losers[0], t2: losers[1], s1: null, s2: null, played: false, isThird: true },
-                    { t1: winners[0], t2: winners[1], s1: null, s2: null, played: false, isFinal: true }
+                    { t1: losers[0], t2: losers[1], s1: null, s2: null, played: false, isThird: true, group: "3rd Place Match" },
+                    { t1: winners[0], t2: winners[1], s1: null, s2: null, played: false, isFinal: true, group: "Grand Final" }
                 ];
+                wcBracketHistory.third = [wcKnockoutMatches[0]];
+                wcBracketHistory.final = [wcKnockoutMatches[1]];
             } else if (wcKnockoutRound === 'third') {
                 wcKnockoutRound = 'ended';
             }
@@ -1109,6 +1187,7 @@
             switchWCTab('bracket');
         }
 
+        // --- RENDER CLASSIER SINGLE DIRECTIONAL PROGRESSIVE BRACKET (As per image_f31f89.png) ---
         function renderWCBracket() {
             const container = $('wc-bracket-container');
             if (!container) return;
@@ -1119,27 +1198,108 @@
                 return;
             }
 
-            let listHtml = wcKnockoutMatches.map(m => {
+            const getNode = (roundArray, index, label = null) => {
+                if (!roundArray || !roundArray[index]) {
+                    return `<div class="bg-slate-900/40 border border-slate-800/60 rounded-lg p-3 w-56 h-[76px] opacity-40 flex items-center justify-center text-[10px] text-slate-500 font-sans">TBD</div>`;
+                }
+                let m = roundArray[index];
                 let pTag = (m.p1 !== null && m.p1 !== undefined) ? `<span class="text-yellow-400 text-[10px] ml-1">(${m.p1}-${m.p2} p)</span>` : '';
-                let scoreLabel = m.played ? `${m.s1} - ${m.s2} ${pTag}` : "VS";
-                let isFinal = m.isFinal ? "border-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.2)]" : "border-slate-800";
+                let s1 = m.played ? m.s1 : '-';
+                let s2 = m.played ? m.s2 : '-';
+                let t1 = WC_TEAMS.find(t=>t.name===m.t1);
+                let t2 = WC_TEAMS.find(t=>t.name===m.t2);
+                let f1 = t1 ? t1.emoji : '🏳️';
+                let f2 = t2 ? t2.emoji : '🏳️';
+                let isUser = wcUserTeam && (m.t1 === wcUserTeam.name || m.t2 === wcUserTeam.name) ? "border-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.25)] z-10 animate-pulse" : "border-slate-800";
+                let bgClass = m.played ? "bg-slate-900" : "bg-slate-800/80";
+                let win1 = m.played && (m.s1 > m.s2 || m.p1 > m.p2) ? "text-white font-black" : "text-slate-400";
+                let win2 = m.played && (m.s2 > m.s1 || m.p2 > m.p1) ? "text-white font-black" : "text-slate-400";
+                
                 return `
-                    <div class="bg-slate-900 border ${isFinal} p-3 rounded-lg w-52 text-xs flex flex-col gap-1">
-                        ${m.isFinal ? '<span class="text-[9px] text-yellow-400 font-bold uppercase text-center w-full mb-1">Grand Final</span>' : ''}
-                        ${m.isThird ? '<span class="text-[9px] text-slate-400 font-bold uppercase text-center w-full mb-1">3rd Place Match</span>' : ''}
-                        <div class="flex justify-between font-bold"><span>${m.t1}</span><span>${m.played ? m.s1 : ''}</span></div>
-                        <div class="flex justify-between font-bold"><span>${m.t2}</span><span>${m.played ? m.s2 : ''}</span></div>
-                        <div class="text-center text-[10px] text-yellow-400 font-semibold border-t border-slate-800/40 pt-1 mt-1">${scoreLabel}</div>
+                    <div class="${bgClass} border ${isUser} rounded-lg p-2.5 w-56 text-[11px] flex flex-col gap-1 relative mb-3 font-sans">
+                        ${label ? `<span class="text-[9px] text-yellow-400 font-bold uppercase text-center w-full block border-b border-slate-800/60 pb-1 mb-1">${label}</span>` : ''}
+                        <div class="flex justify-between items-center bg-slate-950 px-2 py-1 rounded">
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm">${f1}</span>
+                                <span class="truncate w-32 ${win1}">${m.t1}</span>
+                            </div>
+                            <span class="font-bold text-yellow-400">${s1}</span>
+                        </div>
+                        <div class="flex justify-between items-center bg-slate-950 px-2 py-1 rounded mt-1">
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm">${f2}</span>
+                                <span class="truncate w-32 ${win2}">${m.t2}</span>
+                            </div>
+                            <span class="font-bold text-yellow-400">${s2}</span>
+                        </div>
+                        ${pTag ? `<div class="text-center w-full text-[9px] font-bold text-yellow-400 mt-1">${pTag}</div>` : ''}
                     </div>
                 `;
-            }).join("");
+            };
 
-            container.innerHTML = `
-                <div class="flex flex-col gap-4">
-                    <span class="text-xs text-yellow-400 font-black uppercase">${wcKnockoutRound === 'third' ? 'Finals' : wcKnockoutRound.toUpperCase()} MATCHES</span>
-                    <div class="flex gap-4 flex-wrap max-w-4xl">${listHtml}</div>
+            // Left-to-Right columns as per the user's f31f89 reference image
+            // Round of 32 column
+            let r32Html = `<div class="flex flex-col gap-2 min-w-[230px]">`;
+            r32Html += `<span class="text-xs text-yellow-400 font-black uppercase mb-2 border-b border-slate-800 pb-1 block text-center tracking-wider">Round of 32</span>`;
+            for(let i = 0; i < 16; i++) {
+                r32Html += getNode(wcBracketHistory.r32, i);
+            }
+            r32Html += `</div>`;
+
+            // Round of 16 column
+            let r16Html = `<div class="flex flex-col justify-around min-w-[230px] min-h-full">`;
+            r16Html += `<div><span class="text-xs text-yellow-400 font-black uppercase mb-2 border-b border-slate-800 pb-1 block text-center tracking-wider">Round of 16</span>`;
+            for(let i = 0; i < 8; i++) {
+                r16Html += getNode(wcBracketHistory.r16, i);
+            }
+            r16Html += `</div></div>`;
+
+            // Quarterfinals column
+            let qfHtml = `<div class="flex flex-col justify-around min-w-[230px] min-h-full">`;
+            qfHtml += `<div><span class="text-xs text-yellow-400 font-black uppercase mb-2 border-b border-slate-800 pb-1 block text-center tracking-wider">Quarterfinals</span>`;
+            for(let i = 0; i < 4; i++) {
+                qfHtml += getNode(wcBracketHistory.qf, i);
+            }
+            qfHtml += `</div></div>`;
+
+            // Semifinals column
+            let sfHtml = `<div class="flex flex-col justify-around min-w-[230px] min-h-full">`;
+            sfHtml += `<div><span class="text-xs text-yellow-400 font-black uppercase mb-2 border-b border-slate-800 pb-1 block text-center tracking-wider">Semifinals</span>`;
+            for(let i = 0; i < 2; i++) {
+                sfHtml += getNode(wcBracketHistory.sf, i);
+            }
+            sfHtml += `</div></div>`;
+
+            // Finals Column (Includes 3rd Place Match!)
+            let finalHtml = `<div class="flex flex-col justify-around min-w-[230px] min-h-full">`;
+            finalHtml += `<div><span class="text-xs text-yellow-400 font-black uppercase mb-2 border-b border-slate-800 pb-1 block text-center tracking-wider">Finals</span>`;
+            finalHtml += getNode(wcBracketHistory.final, 0, "Grand Final");
+            finalHtml += `<div class="mt-8"></div>`;
+            finalHtml += getNode(wcBracketHistory.third, 0, "Third Place Match");
+            
+            // Champion banner inside finals column
+            let championName = "TBD";
+            let championFlag = "🏆";
+            if (wcBracketHistory.final && wcBracketHistory.final[0] && wcBracketHistory.final[0].played) {
+                let m = wcBracketHistory.final[0];
+                let winner = (m.s1 > m.s2 || m.p1 > m.p2) ? m.t1 : m.t2;
+                let cTeam = WC_TEAMS.find(t=>t.name === winner);
+                championName = winner.toUpperCase();
+                championFlag = cTeam ? cTeam.emoji : "🏆";
+            }
+            finalHtml += `
+                <div class="bg-gradient-to-br from-yellow-400/20 via-amber-600/10 to-transparent border-2 border-yellow-400 rounded-xl p-4 text-center shadow-[0_0_15px_rgba(250,204,21,0.35)] mt-8">
+                    <span class="text-[10px] text-yellow-400 font-extrabold uppercase tracking-widest block mb-1">WORLD CHAMPION</span>
+                    <div class="flex items-center justify-center gap-1.5 font-sans">
+                        <span class="text-2xl">${championFlag}</span>
+                        <span id="wc-champion-name" class="font-black text-sm text-white uppercase truncate">${championName}</span>
+                    </div>
                 </div>
             `;
+            finalHtml += `</div></div>`;
+
+            container.className = "flex gap-8 overflow-x-auto py-4 px-2 custom-scroll w-full h-full";
+            container.innerHTML = r32Html + r16Html + qfHtml + sfHtml + finalHtml;
         }
 
         // --- DRAW FLAG JERSEY LOGIC ---
@@ -1148,6 +1308,7 @@
             ctx.shadowBlur = 8;
             ctx.shadowColor = team.primary || "#333";
             
+            // Draw Shirt Base
             ctx.fillStyle = team.primary || "#333";
             ctx.beginPath();
             ctx.arc(x, y, r, 0, Math.PI * 2);
@@ -1155,38 +1316,46 @@
             
             if (team.secondary) {
                 ctx.strokeStyle = team.secondary;
-                ctx.lineWidth = 6;
+                ctx.lineWidth = 5;
                 ctx.shadowBlur = 0;
                 if (team.stripes === "V") {
                     ctx.beginPath();
-                    ctx.moveTo(x - r/2, y - r); ctx.lineTo(x - r/2, y + r);
-                    ctx.moveTo(x + r/2, y - r); ctx.lineTo(x + r/2, y + r);
+                    ctx.moveTo(x - r/3, y - r); ctx.lineTo(x - r/3, y + r);
+                    ctx.moveTo(x + r/3, y - r); ctx.lineTo(x + r/3, y + r);
                     ctx.stroke();
                 } else if (team.stripes === "H") {
                     ctx.beginPath();
-                    ctx.moveTo(x - r, y - r/2); ctx.lineTo(x + r, y - r/2);
-                    ctx.moveTo(x - r, y + r/2); ctx.lineTo(x + r, y + r/2);
+                    ctx.moveTo(x - r, y - r/3); ctx.lineTo(x + r, y - r/3);
+                    ctx.moveTo(x - r, y + r/3); ctx.lineTo(x + r, y + r/3);
                     ctx.stroke();
                 }
             }
 
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 3;
+            // High-contrast shirt outline
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 4;
             ctx.stroke();
 
-            if (team.badge) {
-                ctx.fillStyle = team.badge;
-                ctx.beginPath();
-                ctx.arc(x, y, r * 0.45, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = team.secondary || "#fff";
-                ctx.beginPath();
-                ctx.arc(x, y, r * 0.2, 0, Math.PI * 2);
-                ctx.fill();
+            // Inner circle flag layer
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(x, y - 2, r * 0.55, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // Render Flag emoji or fallback text in center
+            if (team.emoji) {
+                ctx.fillStyle = "#ffffff";
+                ctx.font = `${r * 0.8}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(team.emoji, x, y - 2);
             } else {
                 ctx.fillStyle = team.secondary || "#fff";
-                ctx.font = 'bold 12px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                ctx.fillText(team.abbrev, x, y);
+                ctx.font = 'bold 11px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText(team.abbrev, x, y - 2);
             }
 
             ctx.restore();
@@ -1249,7 +1418,7 @@
             const menuBtn = $('btn-back-menu-game');
             if (rematchBtn) rematchBtn.classList.toggle('hidden', isWc);
             if (advanceBtn) advanceBtn.classList.toggle('hidden', !isWc);
-            if (menuBtn) menuBtn.classList.toggle('hidden', isWc); // hide normal menu button if in wc
+            if (menuBtn) menuBtn.classList.toggle('hidden', isWc); 
 
             initPitch();
             startLoop();
@@ -1410,14 +1579,14 @@
             if (keysPressed['a']) dx1 -= 1;
             if (keysPressed['d']) dx1 += 1;
 
-            const l1 = Math.hypot(dx1, dy1);
+            const len1 = Math.hypot(dx1, dy1);
             let sM1 = p1.speed;
             
             if (keysPressed[' '] && p1.dashCooldown <= 0) { p1.isDashing = true; p1.dashCooldown = 120; }
             if (p1.isDashing) { sM1 *= 1.8; p1.isDashing = false; }
             if (p1.dashCooldown > 0) p1.dashCooldown--;
 
-            if (l1 > 0) { p1.vx = (dx1/l1)*sM1; p1.vy = (dy1/l1)*sM1; }
+            if (len1 > 0) { p1.vx = (dx1/len1)*sM1; p1.vy = (dy1/len1)*sM1; }
             else { p1.vx *= 0.8; p1.vy *= 0.8; }
             
             p1.x += p1.vx; p1.y += p1.vy;
@@ -1432,13 +1601,13 @@
                 if (keysPressed['arrowleft']) dx2 -= 1;
                 if (keysPressed['arrowright']) dx2 += 1;
 
-                const l2 = Math.hypot(dx2, dy2);
+                const len2 = Math.hypot(dx2, dy2);
                 let sM2 = p2.speed;
                 if (keysPressed['shift'] && p2.dashCooldown <= 0) { p2.isDashing = true; p2.dashCooldown = 120; }
                 if (p2.isDashing) { sM2 *= 1.8; p2.isDashing = false; }
                 if (p2.dashCooldown > 0) p2.dashCooldown--;
 
-                if (l2 > 0) { p2.vx = (dx2/l2)*sM2; p2.vy = (dy2/l2)*sM2; }
+                if (len2 > 0) { p2.vx = (dx2/len2)*sM2; p2.vy = (dy2/len2)*sM2; }
                 else { p2.vx *= 0.8; p2.vy *= 0.8; }
                 p2.x += p2.vx; p2.y += p2.vy;
             } 
